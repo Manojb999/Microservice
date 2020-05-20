@@ -1,0 +1,44 @@
+			   b_1
+			  /
+			 /	
+	a(load balancer)/
+			\
+			 \
+			  \
+			   b_2
+				.
+				.
+				.
+
+
+1.Create number of instances of B application.
+2.override properties
+	.Server.port
+3.Identify which application will send the load.
+4.make that application as load balancer which A application
+5.add dependency of ribbon in that application.
+"<dependency>
+	<groupId>org.springframework.cloud</groupId>
+	<artifactId>spring-cloud-starter-netflix-ribbon</artifactId>
+ </dependency>"
+4.then create a config.java file in that particular application(which is our load balancer)
+5.@Configuration
+public class CustomerConfig {
+
+	@Bean @LoadBalanced
+	RestTemplate restTemplate() {
+		return new RestTemplate();
+	}
+}
+this will be code inside that config.java
+6.autowire it in controller.
+@Autowire
+RestTemplate restTemplate;
+7.Replace or use load balanced restTemplate instead of create a new object and should be done
+  only the method where your sending request B application
+8.and annote it with @RibbonClient(name="custribbon") on class level.
+	custribbon is name of client.which will send request to B.
+9.where step 7 in performed give this url there "http://custribbon/customers(this is hardcoded value)/"
+10.Go to application.properties and add
+	custribbon.ribbon.eureka.enabled=false
+	custribbon.ribbon.listOfServers=http://localhost:8301,http://localhost:8300(this are hardcoded values)
