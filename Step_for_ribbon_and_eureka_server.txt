@@ -1,0 +1,49 @@
+1.create a starter Project
+ follow the image for config
+2.Next->Add dependency (cloud Discovery-> eureka server)->finish.
+
+3.go to Discovery-server
+	and add @EnableEurekaServer from  org.springframework.boot.SpringApplication;
+4.go to application.properties 
+	add spring.application.name=Eureka
+	and server.port=2222(any available)
+	
+	to disable the registry
+	eureka.client.fetch-registry=false 
+	eureka.client.register-with-eureka=false
+	for the url:-
+	eureka.client.service-url.defaultZone=http://localhost:2222/eureka
+5. add 		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-config</artifactId>
+		</dependency>
+	in all microservices.
+
+6.add @EnableDiscoveryClient in all microservices.
+7.add  eureka.client.service-url.defaultZone=http://localhost:2222/eureka in application.properties on cloud(git)
+8.run all
+
+
+9. For dynamic port number(random port number) right click on instances in boot dashboard
+	give server.port as ${PORT:${SERVER_PORT:0}}
+
+10.use this url to see details about the microservice localhost:2222/eureka/apps
+
+11.follow 9th step to for duplicate instances.
+
+12.autowired RestTemplate in CustomerController Because it is over load balancer 
+
+13.follow the ribbon txt file for more about retTemplate.
+14.Give the path as http://PLANMS because name the plan service is planms
+	also for other microservices.
+15.(this step may be optional)previously we added a lines "custribbon.ribbon.eureka.enabled=false and listofServers" because we were using without eureka.
+   so remove the line and by default it is enabled. and rerun
+
+****
+16.add this line on cloud in FriendFamilyMS.properties(or we can say the service which is we creating duplicate instance) 
+	"eureka.instance.instance-id=${spring.cloud.client.hostname}:${spring.application.name}:${spring.application.instance_id:${random.value}}"
+ ans restart the services.
+you see number of instance you have created.
+
+
+that's it.
