@@ -1,0 +1,112 @@
+1.Create a zuul starter project
+	follow the img zuul.png
+
+2.Add dependencies
+	a.cloud routing->zuul
+	b.cloud config
+	c.cloud discovery->eureka-discovery
+and finish.
+
+3.Add annotation 
+	a.@EnableZuulProxy
+	b.@EnableDiscoveryClient
+in the zuul service only.
+
+4.Add bootstrap.properties 
+and add the cloudconfig url inside that file
+
+5.add configuration details in application.properties
+	server.port=3333
+	spring.application.name=ZuulServer
+	
+	/*zuul.routes.route_name*/
+	zuul.routes.plan.path=/plans/**
+	zuul.routes.plan.strip-prefix=false(if you don't want to write the url again)
+	zuul.routes.plan.service-id=PlanMS
+
+***
+zuul automatically does load balancing or use ribbon
+we just need to configure paths of service
+
+LET SEE HOW TO USE ZUUL WITH HISTRIX
+
+1.to generate a error just add RunTimeException()
+to fail the service
+2.create a new Configuraion class.
+
+in pom file replace spring cloud version in properties tag with most stable Dalston.SR1 
+
+
+
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+import org.springframework.cloud.netflix.zuul.filters.route.FallbackProvider;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.client.ClientHttpResponse;
+
+import com.netflix.hystrix.exception.HystrixTimeoutException;
+
+@Configuration
+public class ZullConfigClass {
+
+	@Bean
+	public ZuulFallbackProvider zuulFallbackProvider() {
+		return new ZuulFallbackProvide() {
+			public String getRoute() {
+				return null;
+			}
+			
+			public ClientHttpResponse fallbackResponse()
+			{
+				return new ClientHttpResponse() {
+
+					@Override
+					public InputStream getBody() throws IOException {
+						return new ByteArrayInputStream("Sorry. Something went wrong".getBytes());
+					}
+
+					@Override
+					public HttpHeaders getHeaders() {
+						HttpHeaders headers = new HttpHeaders();
+						headers.setContentType(MediaType.TEXT_PLAIN);
+						return headers;	
+					}
+
+					@Override
+					public HttpStatus getStatusCode() throws IOException {
+						// TODO Auto-generated method stub
+						return HttpStatus.OK;
+					}
+
+					@Override
+					public int getRawStatusCode() throws IOException {
+						// TODO Auto-generated method stub
+						return 200;
+					}
+
+					@Override
+					public String getStatusText() throws IOException {
+						// TODO Auto-generated method stub
+						return "OK";
+					}
+
+					@Override
+					public void close() {
+						// TODO Auto-generated method stub
+						
+					}
+					
+				}
+			}
+
+		}
+	}
+
+}
