@@ -1,0 +1,18 @@
+1.add dependency 
+	<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
+	</dependency>
+  in service which is your load balancer.
+2.Add annotation @EnableCircuitBreaker
+
+3.Add annotation @HystrixCommand(fallbackMethod="the method on which we want to fallback") in controller methods
+
+4.create a method for fallback which is given in step 3
+
+5.Add these in properties file
+hystrix.command.default.circuitBreaker.requestVolumeThreshold=4 (4 request should be sent in 10 sec if 50% or all of them fail then the circuit is open for next 1 min)
+(after resume if first request fail then again for 1 min the circuit in open but if it pass then again same 4,50,60 criteria)
+hystrix.command.default.metrics.rollingStats.timeInMilliseconds=10000
+hystrix.command.default.circuitBreaker.errorThresholdPercentage=50
+hystrix.command.default.circuitBreaker.sleepWindowInMilliseconds=60000
