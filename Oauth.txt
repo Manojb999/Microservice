@@ -1,0 +1,98 @@
+1.we need to register our application on github
+go to setting->developers-setting->then register
+which give the call back url of zuul
+localhost:3333/login 
+it give you client id,client secret
+
+which will use next
+
+2.add dependencies in zuul server
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-oauth2</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-security</artifactId>
+		</dependency>
+
+3.Add annotation @EnableOAuth2Sso
+4.Create a yml file in resourses
+security:
+      oauth2:
+        client:     
+            clientId: 948239fhdfdjkfb12847tajd0r8y24ew
+            clientSecret: wr8fhqn49823h485gwue102479fhcCNJ
+            accessTokenUri: https://GITHUB/oauth/token
+            userAuthorizationUri: https://GITHUB/oauth/authorize
+            clientAuthenticationScheme: form
+
+        resource:
+          userInfoUri: https://GITHUUB/api/v3/user 
+          preferTokenInfo: false
+
+server:
+  port: 3333  
+
+proxy:
+  hostname: 127.0.0.1
+  port: 3333
+  username: github username,password
+  passoword:
+
+domain: GITHUB
+
+useProxy:true
+
+then run the application.
+
+
+Now lets see securing individual microservices
+
+1.add the above two dependencies in that particular microservice which want to secure
+2.@EnableResourceServer
+3.create a application.yml file 
+
+security:
+      oauth2:
+	resource:
+          userInfoUri: https://GITHUUB/api/v3/user 
+
+that's it...
+
+
+For securing cloudConfig server
+
+1.add dependency in cloudconfig service
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+2.In application.properties
+	security.user.name= rook
+	security.user.password=spring
+
+3.And in all the microservices bootstrap.properties
+
+replace http://localhost:1111
+
+with 
+
+http://rook:spring@localhost:1111
+
+
+Now to encrypt the details on git
+
+1.create a bootstrap.properties
+
+add encrypt.key=key_for_encryption
+
+got postman 
+
+send a post request to localhost:1111/ecrypt
+with value key_for_encryption
+
+you will get a encrypted text
+put it on git in front of password
+
+{cipher}b2eca0d07f56cc9ab0b93c92f4dc72
