@@ -1,0 +1,33 @@
+1.Add this dependency in all microservices
+
+	<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-sleuth</artifactId>
+	</dependency>
+ we can observ the console after send a request
+ we found that there is traceId which same in all services and a spanId which is different in all
+
+**With Zipkin
+
+2.Create a Zipkin starter project
+ with dependency of cloud tracing->zipkin ui
+ and more 
+		<dependency>
+			<groupId>io.zipkin.java</groupId>
+			<artifactId>zipkin-server</artifactId>
+			<version>2.12.0</version>
+		</dependency>
+3. Then Add @EnableZipkinServer
+4. Then Give the application name and port number in properties file
+5.then add this dependency in all microservices
+
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-sleuth-zipkin</artifactId>
+		</dependency>
+
+6.this step to be implmented on git repo in application.properties
+
+add porperties:
+	spring.sleuth.sampler.percentage=1.0
+	spring.zipkin.baseUrl=http://localhost:4444
