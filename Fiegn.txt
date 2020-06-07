@@ -1,0 +1,14 @@
+1.Add a dependency for Fiegn in our loa balancer service
+	<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-openfeign</artifactId>
+	</dependency>
+
+2.Add @EnableFeignClient in load balancer application class.
+3.Add a interface inside the controller 
+4.Annotated that interface with @FeignClient("name_of_the_service")
+5.add a method with @RequestMapping(value="path**")
+do not forget the pathvariable("path_variable")
+
+6.Autowired And use that method in place of restTemplate
+7.add path is zuul properties file
